@@ -1,0 +1,44 @@
+Description: >
+  Matembu Emmanuel Dominic | Software Engineer/DevOps Engineer.
+  Creating a personal hello world cloudformation configuration on aws, as away to setup an EC2 Instance.
+  This has two security groups configurations and using parameters defined within the same file.
+Resources:
+  # My EC2 Instance configurations
+  MyServerInstance:
+    Type: AWS::EC2::Instance
+    Properties:
+      AvailabilityZone: us-east-1a
+      ImageId: ami-0022f774911c1d690
+      InstanceType: t2.micro
+      SecurityGroups:
+        - !Ref SSHSecurityGroup
+        - !Ref ServerSecurityGroup
+  # Security Group1 configurations
+  SSHSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: This acts as a virtual firewall for the EC2 instance to control incoming/outgoing traffic thus allowing unrestricted inbound access through port 22.
+      SecurityGroupIngress:
+        - CidrIp: 10.0.0.0/0
+          FromPort: 22
+          IpProtocol: tcp
+          ToPort: 22
+  # Security Group2 configurations
+  ServerSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: This allows connections from specified CIDR ranges from 1-100 thus acts as a virtual firewall thus controlling the traffic that is allowed to reach and leave the resources that it is associated with.
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 10.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 10.0.1.0/32
+  # Elastic IP configurations
+  DominicEIP:
+    Type: AWS::EC2::EIP
+    Properties:
+      InstanceId: !Ref MyServerInstance
